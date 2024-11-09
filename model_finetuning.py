@@ -21,10 +21,10 @@ device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 model.to(device)
 
 # Training and testing paths
-train_real_dir = "/Users/guanz/Documents/cs229/project/CIFake/train/REAL"
-train_fake_dir = "/Users/guanz/Documents/cs229/project/CIFake/train/FAKE"
-test_real_dir = "/Users/guanz/Documents/cs229/project/CIFake/test/REAL"
-test_fake_dir = "/Users/guanz/Documents/cs229/project/CIFake/test/FAKE"
+train_real_dir = "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/train_sampled/real"
+train_fake_dir = "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/train_sampled/fake"
+test_real_dir = "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/validation_sampled/real"
+test_fake_dir = "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/validation_sampled/fake"
 
 # Load datasets
 logger.info("Loading training and testing datasets...")
