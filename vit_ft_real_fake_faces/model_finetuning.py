@@ -1,8 +1,6 @@
-# model_finetuning.py
-
-from transformers import TrainingArguments, Trainer, ViTFeatureExtractor, TrainerCallback  # Import TrainerCallback
+from transformers import TrainingArguments, Trainer, ViTFeatureExtractor, TrainerCallback
 from model_utils import load_model  # Assuming this contains your model loading logic
-from dataset import CIFakeDataset  # Assuming this contains your dataset loading logic
+from dataset import RealFakeDataset  # Replaced CIFakeDataset with RealFakeDataset
 from sklearn.metrics import accuracy_score
 import logging
 import torch
@@ -28,8 +26,8 @@ test_fake_dir = "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_
 
 # Load datasets
 logger.info("Loading training and testing datasets...")
-train_dataset = CIFakeDataset(real_dir=train_real_dir, fake_dir=train_fake_dir, feature_extractor=feature_extractor)
-test_dataset = CIFakeDataset(real_dir=test_real_dir, fake_dir=test_fake_dir, feature_extractor=feature_extractor)
+train_dataset = RealFakeDataset(real_dir=train_real_dir, fake_dir=train_fake_dir, feature_extractor=feature_extractor)
+test_dataset = RealFakeDataset(real_dir=test_real_dir, fake_dir=test_fake_dir, feature_extractor=feature_extractor)
 
 # Define accuracy computation
 def compute_metrics(pred):
