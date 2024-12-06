@@ -1,8 +1,11 @@
+# model_evaluation.py
+
 import os
 import json
 import torch
 import shutil
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -25,6 +28,8 @@ fp_folder = output_path / "false_positives"
 fn_folder = output_path / "false_negatives"
 fp_list_file = output_path / "false_positives.txt"
 fn_list_file = output_path / "false_negatives.txt"
+confusion_matrix_file = output_path / "confusion_matrix.png"
+roc_curve_file = output_path / "roc_curve.png"
 
 # Ensure output directories exist
 output_path.mkdir(parents=True, exist_ok=True)
@@ -49,7 +54,6 @@ true_labels = []
 pred_labels = []
 probabilities = []
 
-# Loop through test dataset
 for item in tqdm(test_dataset, desc="Evaluating"):
     pixel_values = item["pixel_values"].unsqueeze(0).to(device)
     true_label = item["labels"]
@@ -63,10 +67,11 @@ for item in tqdm(test_dataset, desc="Evaluating"):
     true_labels.append(true_label)
     pred_labels.append(pred_label)
 
-# Compute evaluation metrics
+# Convert to numpy arrays
 true_labels = np.array(true_labels)
 pred_labels = np.array(pred_labels)
 
+# Compute evaluation metrics
 accuracy = accuracy_score(true_labels, pred_labels)
 precision = precision_score(true_labels, pred_labels, pos_label=1)
 recall = recall_score(true_labels, pred_labels, pos_label=1)
@@ -74,7 +79,7 @@ f1 = f1_score(true_labels, pred_labels, pos_label=1)
 conf_matrix = confusion_matrix(true_labels, pred_labels)
 roc_auc = roc_auc_score(true_labels, probabilities)
 
-# Save metrics
+# Save metrics as JSON
 metrics = {
     "Accuracy": accuracy,
     "Precision": precision,
@@ -91,12 +96,51 @@ print("Metrics:")
 for key, value in metrics.items():
     print(f"{key}: {value}")
 
+# Plot and save confusion matrix
+plt.figure(figsize=(6, 5))
+plt.imshow(conf_matrix, interpolation='nearest', cmap=plt.cm.Blues)
+plt.title('Confusion Matrix')
+plt.colorbar()
+tick_marks = np.arange(2)
+plt.xticks(tick_marks, ['Nt', 'Tp'], rotation=45)  # Adjust class names if necessary
+plt.yticks(tick_marks, ['Nt', 'Tp'])
+
+thresh = conf_matrix.max() / 2.
+for i, j in np.ndindex(conf_matrix.shape):
+    plt.text(j, i, format(conf_matrix[i, j], 'd'),
+             horizontalalignment="center",
+             color="white" if conf_matrix[i, j] > thresh else "black")
+
+plt.ylabel('True label')
+plt.xlabel('Predicted label')
+plt.tight_layout()
+plt.savefig(confusion_matrix_file)
+plt.close()
+
+print(f"Confusion matrix plot saved to {confusion_matrix_file}")
+
+# Plot and save ROC curve
+fpr, tpr, _ = roc_curve(true_labels, probabilities, pos_label=1)
+plt.figure(figsize=(6, 5))
+plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curve')
+plt.legend(loc="lower right")
+plt.savefig(roc_curve_file)
+plt.close()
+
+print(f"ROC curve plot saved to {roc_curve_file}")
+
 # Identify false positives and false negatives
 fp_list = []
 fn_list = []
 
 for idx, (true, pred) in enumerate(zip(true_labels, pred_labels)):
-    file_path = test_dataset.data[idx]  # Original file path
+    file_path = test_dataset.data[idx]  # Path to the original image
 
     if true == 0 and pred == 1:  # False Positive
         fp_list.append(file_path)
@@ -113,3 +157,4 @@ with open(fn_list_file, "w") as f:
 
 print(f"False positives saved to {fp_list_file}")
 print(f"False negatives saved to {fn_list_file}")
+print("Evaluation complete.")
