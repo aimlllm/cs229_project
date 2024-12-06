@@ -22,7 +22,7 @@ from tqdm import tqdm
 
 # Paths
 model_path = "./results"  # Path to the fine-tuned model
-test_data_path = Path("/Users/guanz/Documents/cs229/project/CASIA2.0_revised/resized_splits/test")
+test_data_path = Path("/Users/guanz/Documents/cs229/project/CASIA2.0_resized_224_no_crop/resized_splits/test")
 output_path = Path("./evaluation_results")
 fp_folder = output_path / "false_positives"
 fn_folder = output_path / "false_negatives"
