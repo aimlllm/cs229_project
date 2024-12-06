@@ -26,7 +26,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # -----------------------------------------
-# Model Definition (merged from model_utils.py)
+# Model Definition
 # -----------------------------------------
 class ViTBinaryClassifier(nn.Module):
     def __init__(self, model_name="google/vit-base-patch16-224-in21k", num_classes=2):
@@ -70,6 +70,11 @@ fn_folder.mkdir(parents=True, exist_ok=True)
 # -----------------------------------------
 logger.info("Loading model and image processor...")
 model = load_model()
+
+# Freeze ViT layers (only train the classification head)
+for param in model.vit.parameters():
+    param.requires_grad = False
+
 image_processor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k")
 
 # Device selection
@@ -154,7 +159,7 @@ trainer.add_callback(VerboseLoggingCallback())
 # Training and Saving
 # -----------------------------------------
 if __name__ == "__main__":
-    logger.info("Starting fine-tuning...")
+    logger.info("Starting fine-tuning with frozen ViT layers...")
     trainer.train()
     logger.info("Fine-tuning complete. Saving the model...")
     trainer.save_model()

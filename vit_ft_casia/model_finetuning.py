@@ -1,10 +1,10 @@
 from transformers import TrainingArguments, Trainer, ViTImageProcessor, TrainerCallback
-from model_utils import load_model  # Assuming this contains your model loading logic
-from dataset import CASIA2Dataset  # Updated dataset logic for your use case
+from model_utils import load_model
+from dataset import CASIA2Dataset
 from sklearn.metrics import accuracy_score
 import logging
 import torch
-import psutil  # To monitor system resource usage
+import psutil
 from pathlib import Path
 
 # Set up logging

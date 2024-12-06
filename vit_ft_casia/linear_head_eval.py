@@ -20,7 +20,7 @@ from tqdm import tqdm
 import torch.nn as nn
 
 # Paths
-model_path = "./results"  # Path to your trained model checkpoint
+model_path = "./results"
 test_data_path = Path("/Users/guanz/Documents/cs229/project/CASIA2.0_resized_224_no_crop/resized_splits/test")
 output_path = Path("./linear_head_evaluation_results")
 fp_folder = output_path / "false_positives"
