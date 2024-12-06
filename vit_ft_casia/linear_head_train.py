@@ -33,12 +33,20 @@ class ViTBinaryClassifier(nn.Module):
         super(ViTBinaryClassifier, self).__init__()
         self.vit = ViTModel.from_pretrained(model_name)
         self.classifier = nn.Linear(self.vit.config.hidden_size, num_classes)
+        self.loss_fct = nn.CrossEntropyLoss()
 
-    def forward(self, pixel_values):
+    def forward(self, pixel_values, labels=None):
         outputs = self.vit(pixel_values=pixel_values)
-        pooled_output = outputs.pooler_output  # [CLS] token representation
+        pooled_output = outputs.pooler_output
         logits = self.classifier(pooled_output)
-        return logits
+
+        loss = None
+        if labels is not None:
+            loss = self.loss_fct(logits, labels)
+
+        # Return a dictionary with 'loss' and 'logits'
+        return {"loss": loss, "logits": logits}
+
 
 def load_model():
     # Loads and returns the ViTBinaryClassifier model
@@ -53,7 +61,7 @@ train_dir = data_base_path / "train"
 dev_dir = data_base_path / "dev"
 test_dir = data_base_path / "test"
 
-output_path = Path("./linear_head_evaluation_results")
+output_path = Path("./linear_head_train_results")
 fp_folder = output_path / "false_positives"
 fn_folder = output_path / "false_negatives"
 fp_list_file = output_path / "false_positives.txt"
@@ -108,7 +116,7 @@ def compute_metrics(pred):
 # -----------------------------------------
 logger.info("Setting up training arguments...")
 training_args = TrainingArguments(
-    output_dir="./results",
+    output_dir="./linear_head_results",
     per_device_train_batch_size=16,
     per_device_eval_batch_size=16,
     num_train_epochs=5,
@@ -180,7 +188,8 @@ if __name__ == "__main__":
         true_label = item["labels"]
 
         with torch.no_grad():
-            logits = model(pixel_values)
+            outputs = model(pixel_values)  # outputs is a dict with 'loss' and 'logits'
+            logits = outputs["logits"]     # Extract the logits tensor
             probs = torch.softmax(logits, dim=-1).cpu().numpy().flatten()
             pred_label = np.argmax(probs)
             probabilities.append(probs[1])  # Probability of "Tp" class

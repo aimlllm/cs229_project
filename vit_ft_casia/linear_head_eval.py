@@ -18,9 +18,10 @@ from dataset import CASIA2Dataset
 from pathlib import Path
 from tqdm import tqdm
 import torch.nn as nn
+from safetensors import safe_open  # Importing safetensors
 
 # Paths
-model_path = "./results"
+model_path = "./linear_head_results"
 test_data_path = Path("/Users/guanz/Documents/cs229/project/CASIA2.0_resized_224_no_crop/resized_splits/test")
 output_path = Path("./linear_head_evaluation_results")
 fp_folder = output_path / "false_positives"
@@ -44,8 +45,8 @@ class ViTBinaryClassifier(nn.Module):
 
     def forward(self, pixel_values):
         outputs = self.vit(pixel_values=pixel_values)
-        # We can use the pooled_output directly (it comes from the [CLS] token):
-        pooled_output = outputs.pooler_output  # shape: (batch_size, hidden_size)
+        # We can use the pooled_output (CLS token representation)
+        pooled_output = outputs.pooler_output
         logits = self.classifier(pooled_output)
         return logits
 
@@ -61,11 +62,15 @@ print("Initializing model...")
 model = ViTBinaryClassifier("google/vit-base-patch16-224-in21k")
 model.to(device)
 
-# Load the trained weights (assuming 'model_path' contains 'pytorch_model.bin' or a similar checkpoint)
-checkpoint_path = os.path.join(model_path, "pytorch_model.bin")
+# Load the trained weights from safetensors
+checkpoint_path = os.path.join(model_path, "model.safetensors")
 if os.path.exists(checkpoint_path):
     print(f"Loading model weights from {checkpoint_path}")
-    state_dict = torch.load(checkpoint_path, map_location=device)
+    state_dict = {}
+    # Load the state dict from safetensors
+    with safe_open(checkpoint_path, framework="pt", device=str(device)) as f:
+        for key in f.keys():
+            state_dict[key] = f.get_tensor(key)
     model.load_state_dict(state_dict)
     print("Model weights loaded.")
 else:
