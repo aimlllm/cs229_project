@@ -21,9 +21,9 @@ from pathlib import Path
 from tqdm import tqdm
 
 # Paths
-model_path = "./results"  # Path to the fine-tuned model
+model_path = "./full_weights_results"  # Path to the fine-tuned model
 test_data_path = Path("/Users/guanz/Documents/cs229/project/CASIA2.0_resized_224_no_crop/resized_splits/test")
-output_path = Path("./evaluation_results")
+output_path = Path("./full_weights_evaluation_results")
 fp_folder = output_path / "false_positives"
 fn_folder = output_path / "false_negatives"
 fp_list_file = output_path / "false_positives.txt"

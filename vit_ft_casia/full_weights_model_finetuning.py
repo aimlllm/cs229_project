@@ -45,7 +45,7 @@ def compute_metrics(pred):
 # Training arguments
 logger.info("Setting up training arguments...")
 training_args = TrainingArguments(
-    output_dir="./results",
+    output_dir="./full_weights_results",
     per_device_train_batch_size=16,  # Reduced batch size to avoid memory issues
     per_device_eval_batch_size=16,
     num_train_epochs=5,
