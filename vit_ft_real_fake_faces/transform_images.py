@@ -54,11 +54,11 @@ if __name__ == "__main__":
     resize_images(test_real_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/test/real")
     resize_images(test_fake_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/test/fake")
 
-    # resize_images(train_real_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/train_sampled/real")
-    # resize_images(train_fake_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/train_sampled/fake")
-    
-    # resize_images(val_real_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/validation_sampled/real")
-    # resize_images(val_fake_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/validation_sampled/fake")
-    
+    resize_images(train_real_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/train_sampled/real")
+    resize_images(train_fake_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/train_sampled/fake")
+
+    resize_images(val_real_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/validation_sampled/real")
+    resize_images(val_fake_dir, "/Users/guanz/Documents/cs229/project/real_fake_faces_140k/real_vs_fake/resized/validation_sampled/fake")
+
     end_time = time.time()
     print(f"Processing completed in {end_time - start_time:.2f} seconds")
