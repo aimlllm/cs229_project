@@ -17,7 +17,7 @@ modelname = 'Xception_Casia_Cropped'
 dir = ["Casia_Cropped/dev/Au", "Casia_Cropped/dev/Tp"]
 dest = 'Trained_Xception_Casia_Cropped_L1/'
 
-#load datasets
+
 ssl._create_default_https_context = ssl._create_unverified_context
 train = keras.utils.image_dataset_from_directory(dirTrain, labels='inferred',
     label_mode='int',
@@ -38,47 +38,9 @@ val = keras.utils.image_dataset_from_directory(dirVal, labels='inferred',
     batch_size=32,
     image_size=(224, 224), shuffle = False)
 
-#import model
-base_model = keras.applications.Xception(
-    weights= 'imagenet',
-    input_shape=(224, 224, 3),
-    include_top=False)
 
-#initializing and training top layers
-base_model.trainable = False
-inputs = keras.Input(shape=(224, 224, 3))
-x = base_model(inputs, training=False)
-p = keras.layers.GlobalAveragePooling2D()(x)
-y = keras.layers.Dense(256, activation = 'relu')(p)
-f = keras.layers.Dropout(0.4)(y)
-a = keras.layers.Dense(128, activation = 'relu')(f)
-b = keras.layers.Dropout(0.4)(a)
-outputs = keras.layers.Dense(1, activation = 'sigmoid')(b)
-
-model = keras.Model(inputs, outputs)
-model.compile(optimizer=keras.optimizers.Adam(1e-4),
-              loss=keras.losses.BinaryCrossentropy(from_logits=False),
-              metrics=[keras.metrics.BinaryAccuracy()])
-model.fit(train, epochs = 20, validation_data=test)
-
-# training whole model
-
-base_model.trainable = True
-lr_schedule = keras.optimizers.schedules.ExponentialDecay(
-    initial_learning_rate=1e-5,
-    decay_steps=10000,
-    decay_rate=0.9)
-
-model.compile(optimizer=keras.optimizers.Adam(learning_rate=lr_schedule, weight_decay=1e-4),
-              loss=keras.losses.BinaryCrossentropy(from_logits=False),
-              metrics=[keras.metrics.BinaryAccuracy()])
-
-model.fit(train, epochs=10, validation_data=test)
-
-model.evaluate(test)
-#saving subset of model for accuracy.py
-convmodel = keras.Model(inputs, [x, outputs])
-
+model = keras.saving.load_model(modelname + '.keras')
+convmodel = keras.saving.load_model('conv_' + modelname + '.keras')
 
 label = np.concatenate([y for x, y in val], axis=0)
 #thanks to this dude for the help with dataset labels
@@ -120,7 +82,7 @@ for i in range(2):
             relu = np.inner(grad, res[0])
             relu = np.maximum(0, relu)
             image = tf.squeeze(image)
-            relu = preprocessing.normalize(relu)
+            relu = preprocessing.normalize(relu, norm = 'l1')
 
             relu = Image.fromarray(np.uint8(255* relu))
             relu = relu.resize((224, 224))
@@ -143,5 +105,4 @@ for i in range(2):
             plt.close()
             index +=1
 
-model.save(dest + modelname + '.keras')
-convmodel.save(dest + 'conv' + modelname + '.keras')
+
