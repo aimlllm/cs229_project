@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    # Paths to your real and fake images directories
     real_dir = "/Users/guanz/Documents/cs229/project/CIFake/test/REAL"
     fake_dir = "/Users/guanz/Documents/cs229/project/CIFake/test/FAKE"
     # real_dir = "/Users/guanz/Documents/cs229/project/CIFake/test/small/real"

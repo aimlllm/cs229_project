@@ -13,7 +13,7 @@ TARGET_SIZE = 224
 # Resize function
 def resize_image(image_path, target_size):
     with Image.open(image_path) as img:
-        # Convert to RGB (if needed)
+        # Convert to RGB
         img = img.convert("RGB")
 
         # Resize to target size without cropping

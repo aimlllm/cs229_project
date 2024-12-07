@@ -18,7 +18,7 @@ from dataset import CASIA2Dataset
 from pathlib import Path
 from tqdm import tqdm
 import torch.nn as nn
-from safetensors import safe_open  # Importing safetensors
+from safetensors import safe_open
 
 # Paths
 model_path = "./linear_head_results"
