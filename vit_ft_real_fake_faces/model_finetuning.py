@@ -1,6 +1,6 @@
 from transformers import TrainingArguments, Trainer, ViTFeatureExtractor, TrainerCallback
-from model_utils import load_model  # Assuming this contains your model loading logic
-from dataset import RealFakeDataset  # Replaced CIFakeDataset with RealFakeDataset
+from model_utils import load_model
+from dataset import RealFakeDataset
 from sklearn.metrics import accuracy_score
 import logging
 import torch

@@ -13,8 +13,8 @@ from tqdm import tqdm
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL_EVAL_OUTPUT_DIR = "./evaluation_results"  # Default output directory from model_evaluation.py
-DEFAULT_TEST_DATASET_DIR = "/Users/guanz/Documents/cs229/project/CASIA2.0_revised/resized_splits/test"
+DEFAULT_MODEL_EVAL_OUTPUT_DIR = "./full_weights_evaluation_results"
+DEFAULT_TEST_DATASET_DIR = "/Users/guanz/Documents/cs229/project/CASIA2.0_resized_224_no_crop/resized_splits/test"
 TP_TN_COUNT = 20  # Number of TP and TN cases
 
 
@@ -120,7 +120,7 @@ def process_images(image_list, feature_extractor, model, device, output_dir, pre
             logger.error(f"Error processing {image_path}: {e}")
 
 
-def main(fp_list=None, fn_list=None, correctly_labeled_list=None, output_dir="./output_images"):
+def main(fp_list=None, fn_list=None, correctly_labeled_list=None, output_dir="./full_weights_amap_output_images"):
     os.makedirs(output_dir, exist_ok=True)
 
     if not (fp_list and fn_list and correctly_labeled_list):
